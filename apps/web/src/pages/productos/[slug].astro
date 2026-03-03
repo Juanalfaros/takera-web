@@ -265,11 +265,11 @@ const dict = {
                             id="add-to-cart-btn"
                             class="btn-add-cart"
                             data-id={product.slug?.current || product.slug}
-                            data-name={product.name}
+                            data-name={localizedName}
                             data-slug={product.slug?.current || product.slug}
                             data-price={String(product.price || 0)}
                             data-image={imageUrl || ""}
-                            data-presentation={product.salePresentation || ""}
+                            data-presentation={localizedPresentation || ""}
                         >
                             <i class="ph ph-shopping-cart-simple"></i>
                             {dict.addToCart}
