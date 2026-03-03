@@ -29,4 +29,15 @@ export default defineConfig({
       useCdn: true,
     }),
   ],
+
+  vite: {
+    resolve: {
+      alias: {
+        'react-dom/server': 'react-dom/server.edge',
+      },
+    },
+    ssr: {
+      noExternal: ['react-dom'],
+    },
+  },
 });
