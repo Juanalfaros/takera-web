@@ -29,4 +29,13 @@ export default defineConfig({
       useCdn: true,
     }),
   ],
+
+  vite: {
+    resolve: {
+      alias: {
+        // Usar la versión edge de React DOM server (compatible con Cloudflare Workers)
+        'react-dom/server': 'react-dom/server.edge',
+      },
+    },
+  },
 });
