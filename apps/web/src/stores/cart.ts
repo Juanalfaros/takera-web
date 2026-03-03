@@ -15,17 +15,17 @@ export const cartItems = persistentAtom<CartItem[]>('takera-cart', [], {
     decode: JSON.parse,
 })
 
-export function addToCart(item: Omit<CartItem, 'quantity'>) {
+export function addToCart(item: Omit<CartItem, 'quantity'>, quantity = 1) {
     const current = cartItems.get()
     const existing = current.find((i) => i.id === item.id)
     if (existing) {
         cartItems.set(
             current.map((i) =>
-                i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+                i.id === item.id ? { ...i, quantity: i.quantity + quantity } : i
             )
         )
     } else {
-        cartItems.set([...current, { ...item, quantity: 1 }])
+        cartItems.set([...current, { ...item, quantity }])
     }
 }
 

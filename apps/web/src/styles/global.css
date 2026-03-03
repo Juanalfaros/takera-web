@@ -17,6 +17,7 @@
   /* Verde Oliva */
   --color-decor: #1C1A1B;
   /* Líneas divisorias */
+  --color-dots: #bbc896;
 
   /* Typography */
   --font-heading: 'Merriweather', serif;
@@ -44,7 +45,7 @@
 
 html,
 body {
-  height: 100%;
+  min-height: 100%;
 }
 
 body {

@@ -65,9 +65,9 @@ const dict = {
                         <Image
                             src={logoTakeraWhite}
                             alt="Takera Logo"
-                            height={60}
+                            height={100}
                             width={180}
-                            style="width: auto; height: 60px;"
+                            style="width: auto; height: 100px;"
                         />
                     </a>
                 </div>
@@ -300,47 +300,65 @@ const dict = {
     }
 
     /* RESPONSIVE */
+    @media (max-width: 1024px) {
+        .footer-grid {
+            gap: 2rem;
+        }
+    }
+
     @media (max-width: 900px) {
         .footer-grid {
             grid-template-columns: 1fr;
             gap: 3rem;
-            text-align: center;
         }
-
         .footer-brand {
+            text-align: center;
             align-items: center;
         }
-
         .footer-tagline {
             margin: 0 auto;
         }
-
         .social-links {
             justify-content: center;
         }
-
         .footer-nav {
-            grid-template-columns: 1fr;
-            text-align: center;
-            gap: 3rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
         }
+    }
 
+    @media (max-width: 768px) {
+        .footer-nav {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem 1.5rem;
+        }
         .contact-col {
-            grid-column: span 1;
+            grid-column: span 2;
         }
-
+        .footer-col h3 {
+            margin-bottom: 1rem;
+        }
         .bottom-content {
             flex-direction: column;
             text-align: center;
+            gap: 1.5rem;
         }
     }
 
     @media (max-width: 480px) {
         .footer-nav {
             grid-template-columns: 1fr;
+            text-align: center;
+        }
+        .footer-col a,
+        .footer-col span {
+            justify-content: center;
         }
         .contact-col {
             grid-column: span 1;
+        }
+        .footer {
+            padding: 4rem 0 0 0;
         }
     }
 </style>
