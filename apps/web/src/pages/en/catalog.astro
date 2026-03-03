@@ -1,0 +1,65 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ProductCatalog from "../../components/Catalog.astro";
+import { sanityClient } from "../../utils/sanity";
+
+const l = "en";
+
+const dict = {
+    seoTitle: "Product Catalog | Takera Pro",
+    seoDesc:
+        "Explore our wide range of corn and flour tortillas, chips, and supplies for the Miami Horeca sector.",
+};
+
+const products = await sanityClient.fetch(`*[_type == "product"]{
+  name,
+  slug,
+  price,
+  featuredImage,
+  summary,
+  description,
+  category,
+  status
+}`);
+---
+
+<Layout title={dict.seoTitle} description={dict.seoDesc}>
+    <div class="page-header">
+        <div class="container">
+            <h1>Our Catalog</h1>
+            <p>Industrial quality with artisanal flavor for your business.</p>
+        </div>
+    </div>
+
+    <ProductCatalog products={products} />
+</Layout>
+
+<style>
+    .page-header {
+        padding: 4rem 0;
+        background-color: var(--color-bg);
+        border-bottom: 1px solid var(--color-decor);
+        text-align: center;
+    }
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    h1 {
+        font-size: 3.5rem;
+        color: var(--color-primary);
+        margin-bottom: 1rem;
+    }
+    p {
+        font-size: 1.25rem;
+        color: #555;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 2.5rem;
+        }
+    }
+</style>

@@ -1,0 +1,196 @@
+---
+// Componente Features - Propuesta de valor industrial B2B
+const l = Astro.currentLocale || "es";
+
+const dict = {
+    es: {
+        badge: "Nuestra Propuesta de Valor",
+        title: "Por qué elegir Takera",
+        subtitle:
+            "No somos solo un proveedor, somos tu socio estratégico en la cocina. Garantizamos calidad constante y entregas precisas.",
+        feat1Title: "Producción Escalable",
+        feat1Desc:
+            "Capacidad industrial para surtir desde un restaurante local hasta grandes cadenas y distribuidores sin comprometer la calidad artesanal.",
+        feat2Title: "Calidad Garantizada",
+        feat2Desc:
+            "Ingredientes seleccionados y procesos estandarizados bajo estrellas de sanidad, para que cada tortilla sea impecable.",
+        feat3Title: "Despacho Eficiente",
+        feat3Desc:
+            "Flota propia en Miami para asegurar que tu producto llegue fresco, a tiempo y en las condiciones exactas que tu cocina requiere.",
+    },
+    en: {
+        badge: "Our Value Proposition",
+        title: "Why choose Takera",
+        subtitle:
+            "We are not just a supplier, we are your strategic partner in the kitchen. We guarantee consistent quality and precise deliveries.",
+        feat1Title: "Scalable Production",
+        feat1Desc:
+            "Industrial capacity to supply from a local restaurant to large chains and distributors without compromising artisanal quality.",
+        feat2Title: "Guaranteed Quality",
+        feat2Desc:
+            "Selected ingredients and standardized processes under sanitation standards, so every tortilla is flawless.",
+        feat3Title: "Efficient Dispatch",
+        feat3Desc:
+            "Own fleet in Miami to ensure your product arrives fresh, on time, and in the exact conditions your kitchen requires.",
+    },
+}[l as "es" | "en"] || {
+    badge: "Nuestra Propuesta de Valor",
+    title: "Por qué elegir Takera",
+    subtitle:
+        "No somos solo un proveedor, somos tu socio estratégico en la cocina. Garantizamos calidad constante y entregas precisas.",
+    feat1Title: "Producción Escalable",
+    feat1Desc:
+        "Capacidad industrial para surtir desde un restaurante local hasta grandes cadenas y distribuidores sin comprometer la calidad artesanal.",
+    feat2Title: "Calidad Garantizada",
+    feat2Desc:
+        "Ingredientes seleccionados y procesos estandarizados bajo estrellas de sanidad, para que cada tortilla sea impecable.",
+    feat3Title: "Despacho Eficiente",
+    feat3Desc:
+        "Flota propia en Miami para asegurar que tu producto llegue fresco, a tiempo y en las condiciones exactas que tu cocina requiere.",
+};
+---
+
+<section id="nosotros" class="features-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="badge">{dict.badge}</span>
+            <h2>{dict.title}</h2>
+            <p>
+                {dict.subtitle}
+            </p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="icon-box">
+                    <i class="ph ph-factory"></i>
+                </div>
+                <h3>{dict.feat1Title}</h3>
+                <p>
+                    {dict.feat1Desc}
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-box">
+                    <i class="ph ph-shield-check"></i>
+                </div>
+                <h3>{dict.feat2Title}</h3>
+                <p>
+                    {dict.feat2Desc}
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon-box">
+                    <i class="ph ph-truck"></i>
+                </div>
+                <h3>{dict.feat3Title}</h3>
+                <p>
+                    {dict.feat3Desc}
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .features-section {
+        padding: 6rem 0;
+        background-color: var(--color-surface);
+        background-image: radial-gradient(
+            var(--color-decor) 1px,
+            transparent 1px
+        );
+        background-size: 20px 20px;
+    }
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    .section-header {
+        text-align: center;
+        margin-bottom: 4rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background-color: var(--color-bg);
+        color: var(--color-accent);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+        border: 1px solid var(--color-decor);
+    }
+    h2 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: var(--color-primary);
+    }
+    .section-header p {
+        font-size: 1.2rem;
+        color: #555;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2.5rem;
+    }
+    .feature-card {
+        background-color: var(--color-bg);
+        padding: 3rem 2rem;
+        border: 1px solid var(--color-decor);
+        text-align: center;
+        transition:
+            transform 0.3s ease,
+            box-shadow 0.3s ease;
+    }
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 8px 8px 0px var(--color-green);
+    }
+    .icon-box {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 80px;
+        height: 80px;
+        background-color: var(--color-surface);
+        border: 2px solid var(--color-primary);
+        color: var(--color-green);
+        margin-bottom: 1.5rem;
+    }
+    .icon-box i {
+        font-size: 2.5rem;
+    }
+    h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--color-primary);
+    }
+    p {
+        color: #444;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 900px) {
+        .features-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    @media (max-width: 600px) {
+        h2 {
+            font-size: 2.5rem;
+        }
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>

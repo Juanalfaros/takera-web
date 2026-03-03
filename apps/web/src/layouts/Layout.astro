@@ -1,0 +1,58 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import CartDrawer from "../components/CartDrawer.astro";
+import { ViewTransitions } from "astro:transitions";
+
+// Importar pesos de Phosphor Icons desde el paquete oficial
+import "@phosphor-icons/web/regular";
+import "@phosphor-icons/web/bold";
+import "@phosphor-icons/web/duotone";
+import "@phosphor-icons/web/fill";
+import "@phosphor-icons/web/light";
+import "@phosphor-icons/web/thin";
+
+interface Props {
+    title: string;
+    description?: string;
+}
+
+const l = Astro.currentLocale || "es";
+
+const {
+    title,
+    description = l === "en"
+        ? "Custom technological solutions for ambitious companies"
+        : "Soluciones tecnológicas a medida para empresas ambiciosas",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={l}>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="generator" content={Astro.generator} />
+        <meta name="description" content={description} />
+        <title>{title} | Takera Pro</title>
+        <ViewTransitions />
+    </head>
+    <body>
+        <Header />
+        <CartDrawer />
+        <main>
+            <slot />
+        </main>
+        <Footer />
+    </body>
+</html>
+
+<style>
+    main {
+        min-height: calc(
+            100vh - var(--header-height, 80px) - var(--footer-height, 100px)
+        );
+    }
+</style>

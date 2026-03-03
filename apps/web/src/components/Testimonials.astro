@@ -1,0 +1,187 @@
+---
+const l = Astro.currentLocale || "es";
+
+const dict = {
+    es: {
+        badge: "Casos de Éxito",
+        title: "Lo que dicen nuestros socios",
+        t1Quote: `"Takera solucionó nuestro mayor problema: la consistencia. Antes, nuestras tortillas variaban de un día a otro. Ahora, sabemos exactamente qué recibiremos en cada lote, y la resistencia de la tortilla soporta nuestros platillos más pesados."`,
+        t1Author: "Carlos Mendoza",
+        t1Role: "Chef Ejecutivo, La Parrilla Americana",
+        t2Quote: `"Escalar nuestras operaciones requiere proveedores que puedan seguirnos el ritmo. Takera nos despacha tres veces por semana con precisión milimétrica. La maquinaria industrial que tienen y su logística en Miami son impresionantes."`,
+        t2Author: "Sofía Navarro",
+        t2Role: "Gerente de Compras, Latin Food Distributors",
+    },
+    en: {
+        badge: "Success Stories",
+        title: "What our partners say",
+        t1Quote: `"Takera solved our biggest problem: consistency. Before, our tortillas varied from day to day. Now, we know exactly what we'll receive in each batch, and the tortilla's resistance supports our heaviest dishes."`,
+        t1Author: "Carlos Mendoza",
+        t1Role: "Executive Chef, La Parrilla Americana",
+        t2Quote: `"Scaling our operations requires suppliers that can keep up with us. Takera dispatches to us three times a week with pinpoint precision. Their industrial machinery and logistics in Miami are impressive."`,
+        t2Author: "Sofia Navarro",
+        t2Role: "Purchasing Manager, Latin Food Distributors",
+    },
+}[l as "es" | "en"] || {
+    badge: "Casos de Éxito",
+    title: "Lo que dicen nuestros socios",
+    t1Quote: `"Takera solucionó nuestro mayor problema: la consistencia. Antes, nuestras tortillas variaban de un día a otro. Ahora, sabemos exactamente qué recibiremos en cada lote, y la resistencia de la tortilla soporta nuestros platillos más pesados."`,
+    t1Author: "Carlos Mendoza",
+    t1Role: "Chef Ejecutivo, La Parrilla Americana",
+    t2Quote: `"Escalar nuestras operaciones requiere proveedores que puedan seguirnos el ritmo. Takera nos despacha tres veces por semana con precisión milimétrica. La maquinaria industrial que tienen y su logística en Miami son impresionantes."`,
+    t2Author: "Sofía Navarro",
+    t2Role: "Gerente de Compras, Latin Food Distributors",
+};
+---
+
+<section class="testimonials-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="badge">{dict.badge}</span>
+            <h2>{dict.title}</h2>
+        </div>
+
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <i class="ph-fill ph-quotes"></i>
+                <p class="quote">
+                    {dict.t1Quote}
+                </p>
+                <div class="author">
+                    <div class="avatar">
+                        <i class="ph ph-user"></i>
+                    </div>
+                    <div>
+                        <h4>{dict.t1Author}</h4>
+                        <span>{dict.t1Role}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <i class="ph-fill ph-quotes"></i>
+                <p class="quote">
+                    {dict.t2Quote}
+                </p>
+                <div class="author">
+                    <div class="avatar">
+                        <i class="ph ph-users"></i>
+                    </div>
+                    <div>
+                        <h4>{dict.t2Author}</h4>
+                        <span>{dict.t2Role}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .testimonials-section {
+        padding: 6rem 0;
+        background-color: #f2ede4; /* Ligeramente más oscuro que el fondo para contraste */
+        border-top: 1px solid var(--color-decor);
+    }
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    .section-header {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+    .badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background-color: var(--color-surface);
+        color: var(--color-accent);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+        border: 1px solid var(--color-decor);
+    }
+    h2 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: var(--color-primary);
+    }
+
+    .testimonials-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2.5rem;
+    }
+    .testimonial-card {
+        background-color: var(--color-surface);
+        padding: 3rem;
+        border: 2px solid var(--color-primary);
+        position: relative;
+    }
+    .testimonial-card .ph-quotes {
+        font-size: 3rem;
+        color: rgba(156, 178, 86, 0.2); /* Verde oliva transparente */
+        position: absolute;
+        top: 1.5rem;
+        right: 2rem;
+    }
+    .quote {
+        font-family: var(--font-heading);
+        font-size: 1.25rem;
+        line-height: 1.7;
+        font-style: italic;
+        color: var(--color-primary);
+        margin-bottom: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+    .author {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border-top: 1px solid var(--color-decor);
+        padding-top: 1.5rem;
+    }
+    .avatar {
+        width: 50px;
+        height: 50px;
+        background-color: var(--color-bg);
+        border: 1px solid var(--color-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--color-green);
+        font-size: 1.5rem;
+    }
+    h4 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: var(--color-primary);
+    }
+    .author span {
+        font-size: 0.85rem;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    @media (max-width: 900px) {
+        .testimonials-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    @media (max-width: 600px) {
+        h2 {
+            font-size: 2.5rem;
+        }
+        .testimonial-card {
+            padding: 2rem;
+        }
+        .quote {
+            font-size: 1.1rem;
+        }
+    }
+</style>

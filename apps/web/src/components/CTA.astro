@@ -1,0 +1,164 @@
+---
+// Componente CTA - Call to Action final
+const l = Astro.currentLocale || "es";
+
+const dict = {
+    es: {
+        badge: "¿Listo para escalar?",
+        title: "Abastece tu negocio con la mejor calidad",
+        desc: "Cotiza hoy mismo. Nuestro equipo te asesorará con los volúmenes y frecuencias de entrega ideales para la operación de tu cocina.",
+        emailUrl: "mailto:ventas@takera.us",
+        emailBtn: "Enviar Correo",
+        phoneUrl: "tel:+13055550199",
+        phoneBtn: "Llamar a Ventas",
+    },
+    en: {
+        badge: "Ready to scale?",
+        title: "Supply your business with the best quality",
+        desc: "Request a quote today. Our team will advise you on the ideal volumes and delivery frequencies for your kitchen's operation.",
+        emailUrl: "mailto:sales@takera.us",
+        emailBtn: "Send Email",
+        phoneUrl: "tel:+13055550199",
+        phoneBtn: "Call Sales",
+    },
+}[l as "es" | "en"] || {
+    badge: "¿Listo para escalar?",
+    title: "Abastece tu negocio con la mejor calidad",
+    desc: "Cotiza hoy mismo. Nuestro equipo te asesorará con los volúmenes y frecuencias de entrega ideales para la operación de tu cocina.",
+    emailUrl: "mailto:ventas@takera.us",
+    emailBtn: "Enviar Correo",
+    phoneUrl: "tel:+13055550199",
+    phoneBtn: "Llamar a Ventas",
+};
+---
+
+<section id="contacto" class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <span class="badge">{dict.badge}</span>
+            <h2>{dict.title}</h2>
+            <p>
+                {dict.desc}
+            </p>
+            <div class="actions">
+                <a href={dict.emailUrl} class="btn-primary">
+                    <i class="ph ph-envelope-simple"></i>
+                    {dict.emailBtn}
+                </a>
+                <a href={dict.phoneUrl} class="btn-secondary">
+                    <i class="ph ph-phone"></i>
+                    {dict.phoneBtn}
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .cta-section {
+        padding: 8rem 0;
+        background-color: var(--color-primary);
+        color: var(--color-surface);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Patrón industrial de fondo sutil */
+    .cta-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0.05;
+        background-image: repeating-linear-gradient(
+            45deg,
+            var(--color-surface) 0,
+            var(--color-surface) 1px,
+            transparent 1px,
+            transparent 10px
+        );
+        z-index: 0;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        position: relative;
+        z-index: 1;
+    }
+    .badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background-color: rgba(233, 118, 43, 0.2);
+        color: var(--color-accent);
+        border: 1px solid var(--color-accent);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 2rem;
+    }
+    h2 {
+        font-size: 3.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--color-surface);
+        line-height: 1.1;
+    }
+    p {
+        font-size: 1.25rem;
+        color: #e0e0e0;
+        margin-bottom: 3rem;
+        line-height: 1.6;
+    }
+
+    .actions {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+    }
+    .btn-primary,
+    .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 2.5rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        text-decoration: none;
+        letter-spacing: 1px;
+        transition: all 0.2s ease;
+    }
+    .btn-primary {
+        background-color: var(--color-accent);
+        color: var(--color-surface);
+        border: 2px solid var(--color-accent);
+    }
+    .btn-primary:hover {
+        background-color: transparent;
+        color: var(--color-accent);
+    }
+    .btn-secondary {
+        background-color: transparent;
+        color: var(--color-surface);
+        border: 2px solid var(--color-surface);
+    }
+    .btn-secondary:hover {
+        background-color: var(--color-surface);
+        color: var(--color-primary);
+    }
+    i.ph {
+        font-size: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+        h2 {
+            font-size: 2.5rem;
+        }
+        .actions {
+            flex-direction: column;
+        }
+    }
+</style>

@@ -4,3 +4,7 @@ node_modules
 dist
 .DS_Store
 local.db
+
+# AI Agent configuration (Antigravity)
+.agent/
+.agents/

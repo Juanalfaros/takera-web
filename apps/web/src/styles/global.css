@@ -1,28 +1,93 @@
 /* apps/web/src/styles/global.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Work+Sans:wght@300;400;600&display=swap');
+
 :root {
-  --primary-color: #333;
-  --bg-color: #fff;
-  --font-base: system-ui, -apple-system, sans-serif;
+  /* Core Palette */
+  --color-bg: #FFF9F0;
+  /* Crema suave/Masa */
+  --color-surface: #ffffff;
+  /* Blanco puro */
+  --color-text: #1C1A1B;
+  /* Negro Carbón */
+  --color-primary: #1C1A1B;
+  --color-accent: #E9762B;
+  /* Naranja Fuego */
+  --color-green: #9CB256;
+  /* Verde Oliva */
+  --color-decor: #1C1A1B;
+  /* Líneas divisorias */
+
+  /* Typography */
+  --font-heading: 'Merriweather', serif;
+  --font-body: 'Work Sans', sans-serif;
+
+  /* Global Metrics */
+  --border-radius: 0px;
+  /* Aspecto industrial tribal (100% sharp edges) */
+}
+
+/* ==========================================================================
+   CSS Reset (Modern Reset)
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  font-family: var(--font-base);
-  background-color: var(--bg-color);
-  color: var(--primary-color);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
 }
 
-/* Sistema de Grid simple para catálogo */
-.catalog-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 2rem;
-  padding: 2rem;
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
 }
 
-.product-card {
-  border: 1px solid #eee;
-  padding: 1rem;
-  border-radius: 8px;
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
 }

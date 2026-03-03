@@ -1,0 +1,84 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { localizePath } from "../../utils/i18n";
+
+const l = "en";
+
+const dict = {
+    title: "Thank You for Reaching Out!",
+    desc: "We have successfully received your message. A member of our team will get in touch with you shortly.",
+    button: "Browse Products",
+};
+---
+
+<Layout title={dict.title} description={dict.desc}>
+    <div class="success-page">
+        <div class="container">
+            <div class="success-content">
+                <div class="success-icon">
+                    <i class="ph ph-check-circle"></i>
+                </div>
+                <h1>{dict.title}</h1>
+                <p>{dict.desc}</p>
+                <a href={localizePath("/catalog", l)} class="btn-primary">
+                    {dict.button}
+                    <i class="ph ph-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .success-page {
+        height: 70vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--color-surface);
+        text-align: center;
+    }
+    .container {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    .success-icon {
+        font-size: 5rem;
+        color: #16a34a;
+        margin-bottom: 2rem;
+    }
+    h1 {
+        font-size: 3rem;
+        color: var(--color-primary);
+        margin-bottom: 1.5rem;
+    }
+    p {
+        font-size: 1.25rem;
+        color: #555;
+        margin-bottom: 3rem;
+        line-height: 1.6;
+    }
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 2.5rem;
+        background-color: var(--color-accent);
+        color: #fff;
+        text-decoration: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.2s ease;
+    }
+    .btn-primary:hover {
+        background-color: var(--color-primary);
+        box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.1);
+    }
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 2.25rem;
+        }
+    }
+</style>

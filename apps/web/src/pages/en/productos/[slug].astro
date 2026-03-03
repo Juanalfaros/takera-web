@@ -1,0 +1,11 @@
+---
+import ProductoDetail from "../../productos/[slug].astro";
+
+export function getStaticPaths() {
+    return ProductoDetail.getStaticPaths ? ProductoDetail.getStaticPaths() : [];
+}
+
+const { slug } = Astro.params;
+---
+
+<ProductoDetail />

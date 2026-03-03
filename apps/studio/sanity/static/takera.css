@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Work+Sans:wght@300;400;600&display=swap');
+
+:root {
+  --wp-font-family-sans: 'Work Sans', system-ui, sans-serif;
+  --wp-font-family-serif: 'Merriweather', Georgia, serif;
+}
+
+[data-ui="Text"],
+[data-ui="TextInput"],
+[data-ui="Label"],
+[data-ui="Button"] {
+  font-family: var(--wp-font-family-sans) !important;
+}
+
+h1, h2, h3, h4, [data-ui="Heading"] {
+  font-family: var(--wp-font-family-serif) !important;
+}
+
+[data-ui="Button"][data-tone="primary"] {
+  background-color: #E9762B !important;
+}

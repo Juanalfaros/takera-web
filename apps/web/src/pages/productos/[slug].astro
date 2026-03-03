@@ -1,0 +1,654 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { sanityClient, urlFor } from "../../utils/sanity";
+import { getLocalizedValue, localizePath } from "../../utils/i18n";
+import { PortableText } from "@portabletext/react";
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+const currentLocale = Astro.currentLocale;
+
+// Consulta GROQ para obtener el producto por slug
+const product = await sanityClient.fetch(
+    `*[_type == "product" && slug.current == $slug][0]{
+        name,
+        slug,
+        price,
+        salePresentation,
+        sku,
+        category,
+        status,
+        badges,
+        featuredImage,
+        images,
+        summary,
+        description,
+        specifications,
+        logistics
+    }`,
+    { slug },
+);
+
+if (!product) {
+    return Astro.redirect("/404");
+}
+
+const imageUrl = product.featuredImage
+    ? urlFor(product.featuredImage).width(800).url()
+    : null;
+
+// Extracción i18n
+const localizedName = getLocalizedValue(product.name, currentLocale);
+const localizedPresentation = getLocalizedValue(
+    product.salePresentation,
+    currentLocale,
+);
+
+// Diccionarios base JS simplificados de bloques si existieran (Portable Text to Plain)
+const rawSummary = getLocalizedValue(product.summary, currentLocale);
+const summaryText = rawSummary; // En este punto sanity nos devuelve el objeto o texto
+
+const rawDescription = getLocalizedValue(product.description, currentLocale);
+const descriptionText = rawDescription; // Igualmente, extraido desde raw
+
+const categoryLabels: Record<string, string> = {
+    "flour-tortillas":
+        currentLocale === "en" ? "Flour Tortillas" : "Tortillas de Harina",
+    "corn-tortillas":
+        currentLocale === "en" ? "Corn Tortillas" : "Tortillas de Maíz",
+    chips: "Chips / Totopos",
+    supplies: currentLocale === "en" ? "Supplies" : "Insumos",
+};
+
+const statusLabels: Record<string, string> = {
+    "in-stock": currentLocale === "en" ? "In Stock" : "En Stock",
+    "out-of-stock": currentLocale === "en" ? "Out of Stock" : "Agotado",
+    "coming-soon": currentLocale === "en" ? "Coming Soon" : "Próximamente",
+};
+
+// Logistica
+const billingUnit = getLocalizedValue(
+    product.logistics?.billingUnit,
+    currentLocale,
+);
+
+const dict = {
+    es: {
+        home: "Inicio",
+        products: "Productos",
+        addToCart: "Agregar a Cotización",
+        viewCart: "Ver cotización",
+        description: "Descripción",
+        specs: "Ficha Técnica",
+        billingUnit: "Unidad de facturación",
+        salesMultiple: "Múltiplo de venta",
+        dimensions: "Dimensiones",
+        units: "unidades",
+        from: "Desde",
+    },
+    en: {
+        home: "Home",
+        products: "Products",
+        addToCart: "Add to Quote",
+        viewCart: "View quote",
+        description: "Description",
+        specs: "Technical Sheet",
+        billingUnit: "Billing unit",
+        salesMultiple: "Sales multiple",
+        dimensions: "Dimensions",
+        units: "units",
+        from: "From",
+    },
+}[currentLocale as "es" | "en"] || {
+    home: "Inicio",
+    products: "Productos",
+    addToCart: "Agregar a Cotización",
+    viewCart: "Ver cotización",
+    description: "Descripción",
+    specs: "Ficha Técnica",
+    billingUnit: "Unidad de facturación",
+    salesMultiple: "Múltiplo de venta",
+    dimensions: "Dimensiones",
+    units: "unidades",
+    from: "Desde",
+};
+---
+
+<Layout
+    title={localizedName}
+    description={summaryText ||
+        `Ficha técnica de ${localizedName} - Takera Pro`}
+>
+    <div class="product-page">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <nav class="breadcrumb">
+                <a href={localizePath("/", currentLocale)}>{dict.home}</a>
+                <span>/</span>
+                <a href={localizePath("/#soluciones", currentLocale)}
+                    >{dict.products}</a
+                >
+                <span>/</span>
+                <span>{localizedName}</span>
+            </nav>
+
+            <div class="product-layout">
+                <!-- Imagen principal -->
+                <div class="product-gallery">
+                    {
+                        imageUrl ? (
+                            <div class="main-image">
+                                <img src={imageUrl} alt={product.name} />
+                            </div>
+                        ) : (
+                            <div class="image-placeholder">
+                                <i class="ph ph-image" />
+                            </div>
+                        )
+                    }
+                    {
+                        product.images && product.images.length > 0 && (
+                            <div class="thumbnail-grid">
+                                {product.images.slice(0, 4).map((img: any) => (
+                                    <div class="thumbnail">
+                                        <img
+                                            src={urlFor(img).width(200).url()}
+                                            alt={product.name}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        )
+                    }
+                </div>
+
+                <!-- Detalle del producto -->
+                <div class="product-detail">
+                    <div class="product-meta">
+                        {
+                            product.category && (
+                                <span class="category-badge">
+                                    {categoryLabels[product.category] ||
+                                        product.category}
+                                </span>
+                            )
+                        }
+                        {
+                            product.status && (
+                                <span
+                                    class={`status-badge status-${product.status}`}
+                                >
+                                    {statusLabels[product.status] ||
+                                        product.status}
+                                </span>
+                            )
+                        }
+                    </div>
+
+                    <h1>{localizedName}</h1>
+
+                    {
+                        summaryText && (
+                            <div class="summary">
+                                {Array.isArray(summaryText) ? (
+                                    <PortableText value={summaryText} />
+                                ) : (
+                                    summaryText
+                                )}
+                            </div>
+                        )
+                    }
+
+                    {
+                        product.price && (
+                            <div class="price-block">
+                                <span class="price">
+                                    {dict.from} ${product.price}{" "}
+                                    <span class="currency">USD</span>
+                                </span>
+                                {localizedPresentation && (
+                                    <span class="presentation">
+                                        {localizedPresentation}
+                                    </span>
+                                )}
+                            </div>
+                        )
+                    }
+
+                    <div class="product-info">
+                        {
+                            product.sku && (
+                                <div class="info-row">
+                                    <span class="label">SKU</span>
+                                    <span class="value">{product.sku}</span>
+                                </div>
+                            )
+                        }
+                        {
+                            billingUnit && (
+                                <div class="info-row">
+                                    <span class="label">
+                                        {dict.billingUnit}
+                                    </span>
+                                    <span class="value">{billingUnit}</span>
+                                </div>
+                            )
+                        }
+                        {
+                            product.logistics?.salesMultiple && (
+                                <div class="info-row">
+                                    <span class="label">
+                                        {dict.salesMultiple}
+                                    </span>
+                                    <span class="value">
+                                        {product.logistics.salesMultiple}{" "}
+                                        {dict.units}
+                                    </span>
+                                </div>
+                            )
+                        }
+                        {
+                            product.logistics?.dimensions && (
+                                <div class="info-row">
+                                    <span class="label">{dict.dimensions}</span>
+                                    <span class="value">
+                                        {product.logistics.dimensions}
+                                    </span>
+                                </div>
+                            )
+                        }
+                    </div>
+
+                    <div class="detail-actions">
+                        <button
+                            id="add-to-cart-btn"
+                            class="btn-add-cart"
+                            data-id={product.slug?.current || product.slug}
+                            data-name={product.name}
+                            data-slug={product.slug?.current || product.slug}
+                            data-price={String(product.price || 0)}
+                            data-image={imageUrl || ""}
+                            data-presentation={product.salePresentation || ""}
+                        >
+                            <i class="ph ph-shopping-cart-simple"></i>
+                            {dict.addToCart}
+                        </button>
+                        <a
+                            href={localizePath("/cotizacion", currentLocale)}
+                            class="btn-outline-link"
+                        >
+                            {dict.viewCart}
+                            <i class="ph ph-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Descripción y ficha técnica -->
+            <div class="product-body">
+                {
+                    descriptionText && (
+                        <div class="description-section">
+                            <h2>{dict.description}</h2>
+                            <div class="rich-text">
+                                {Array.isArray(descriptionText) ? (
+                                    <PortableText value={descriptionText} />
+                                ) : (
+                                    descriptionText
+                                )}
+                            </div>
+                        </div>
+                    )
+                }
+
+                {
+                    product.specifications &&
+                        product.specifications.length > 0 && (
+                            <div class="specs-section">
+                                <h2>{dict.specs}</h2>
+                                <table class="specs-table">
+                                    <tbody>
+                                        {product.specifications.map(
+                                            (spec: any) => (
+                                                <tr>
+                                                    <td class="spec-key">
+                                                        {getLocalizedValue(
+                                                            spec.key,
+                                                            currentLocale,
+                                                        )}
+                                                    </td>
+                                                    <td class="spec-value">
+                                                        {getLocalizedValue(
+                                                            spec.value,
+                                                            currentLocale,
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            ),
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )
+                }
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .product-page {
+        padding: 3rem 0 6rem;
+        background: var(--color-bg);
+    }
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+        font-size: 0.9rem;
+        color: #888;
+    }
+    .breadcrumb a {
+        color: var(--color-accent);
+        text-decoration: none;
+    }
+    .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .product-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        margin-bottom: 4rem;
+    }
+    @media (max-width: 768px) {
+        .product-layout {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+    }
+
+    .main-image {
+        aspect-ratio: 4/3;
+        background: #f5f5f5;
+        border: 1px solid var(--color-decor);
+        overflow: hidden;
+    }
+    .main-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .image-placeholder {
+        aspect-ratio: 4/3;
+        background: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        color: #ccc;
+    }
+
+    .thumbnail-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+    .thumbnail {
+        aspect-ratio: 1;
+        overflow: hidden;
+        border: 1px solid var(--color-decor);
+        cursor: pointer;
+    }
+    .thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .product-meta {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+    .category-badge,
+    .status-badge {
+        display: inline-block;
+        padding: 0.2rem 0.75rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: 1px solid var(--color-decor);
+    }
+    .category-badge {
+        background: var(--color-bg);
+        color: var(--color-accent);
+    }
+    .status-in-stock {
+        background: #e8f5e9;
+        color: #2e7d32;
+        border-color: #a5d6a7;
+    }
+    .status-out-of-stock {
+        background: #fce4ec;
+        color: #c62828;
+        border-color: #ef9a9a;
+    }
+    .status-coming-soon {
+        background: #fff3e0;
+        color: #e65100;
+        border-color: #ffcc80;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        color: var(--color-primary);
+        margin-bottom: 1rem;
+    }
+    .summary {
+        color: #555;
+        font-size: 1.1rem;
+        line-height: 1.7;
+        margin-bottom: 1.5rem;
+    }
+
+    .price-block {
+        display: flex;
+        align-items: baseline;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding: 1rem 0;
+        border-top: 1px solid var(--color-decor);
+        border-bottom: 1px solid var(--color-decor);
+    }
+    .price {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--color-accent);
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+    }
+    .price .currency {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #888;
+        letter-spacing: 0.5px;
+    }
+    .presentation {
+        font-size: 0.9rem;
+        color: #888;
+    }
+
+    .product-info {
+        margin-bottom: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .info-row {
+        display: flex;
+        gap: 1rem;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        font-size: 0.95rem;
+    }
+    .info-row .label {
+        color: #888;
+        min-width: 160px;
+    }
+    .info-row .value {
+        color: var(--color-primary);
+        font-weight: 500;
+    }
+
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 2rem;
+        background: var(--color-primary);
+        color: #fff;
+        text-decoration: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: opacity 0.2s;
+    }
+    .btn-primary:hover {
+        opacity: 0.85;
+    }
+
+    .detail-actions {
+        display: flex;
+        gap: 0.75rem;
+        align-items: stretch;
+        flex-wrap: wrap;
+    }
+    .btn-add-cart {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.9rem 1.75rem;
+        background: var(--color-accent);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition:
+            background 0.2s,
+            transform 0.15s;
+        flex: 1;
+        justify-content: center;
+    }
+    .btn-add-cart:hover {
+        background: var(--color-primary);
+    }
+    .btn-add-cart.added {
+        background: #16a34a;
+        transform: scale(1.02);
+    }
+    .btn-outline-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.9rem 1.25rem;
+        border: 2px solid var(--color-primary);
+        color: var(--color-primary);
+        text-decoration: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+    .btn-outline-link:hover {
+        background: var(--color-primary);
+        color: #fff;
+    }
+
+    .product-body {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        padding-top: 3rem;
+        border-top: 2px solid var(--color-decor);
+    }
+    @media (max-width: 768px) {
+        .product-body {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+    }
+
+    .product-body h2 {
+        font-size: 1.5rem;
+        color: var(--color-primary);
+        margin-bottom: 1rem;
+    }
+    .description-section p {
+        color: #555;
+        line-height: 1.8;
+        white-space: pre-line;
+    }
+
+    .specs-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .specs-table tr:nth-child(even) {
+        background: rgba(0, 0, 0, 0.03);
+    }
+    .spec-key,
+    .spec-value {
+        padding: 0.6rem 0.75rem;
+        font-size: 0.95rem;
+        border-bottom: 1px solid var(--color-decor);
+    }
+    .spec-key {
+        color: #888;
+        width: 45%;
+    }
+    .spec-value {
+        color: var(--color-primary);
+        font-weight: 500;
+    }
+</style>
+
+<script>
+    import { addToCart } from "../../stores/cart.ts";
+
+    const btn = document.getElementById(
+        "add-to-cart-btn",
+    ) as HTMLButtonElement | null;
+    if (btn) {
+        btn.addEventListener("click", () => {
+            addToCart({
+                id: btn.dataset.id || btn.dataset.slug || "",
+                name: btn.dataset.name || "",
+                slug: btn.dataset.slug || "",
+                price: parseFloat(btn.dataset.price || "0"),
+                imageUrl: btn.dataset.image || null,
+                salePresentation: btn.dataset.presentation,
+            });
+            btn.classList.add("added");
+            setTimeout(() => btn.classList.remove("added"), 1200);
+            document.dispatchEvent(new CustomEvent("open-cart"));
+        });
+    }
+</script>

@@ -1,0 +1,93 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { localizePath } from "../utils/i18n";
+
+const l = Astro.currentLocale || "es";
+
+const dict = {
+    es: {
+        title: "404 - Página no encontrada",
+        desc: "Lo sentimos, la página que buscas no existe o ha sido movida.",
+        button: "Volver al Inicio",
+    },
+    en: {
+        title: "404 - Page Not Found",
+        desc: "Sorry, the page you are looking for does not exist or has been moved.",
+        button: "Back to Home",
+    },
+}[l as "es" | "en"] || {
+    title: "404 - Página no encontrada",
+    desc: "Lo sentimos, la página que buscas no existe o ha sido movida.",
+    button: "Volver al Inicio",
+};
+---
+
+<Layout title={dict.title} description={dict.desc}>
+    <div class="error-page">
+        <div class="container">
+            <div class="error-content">
+                <span class="error-code">404</span>
+                <h1>{dict.title}</h1>
+                <p>{dict.desc}</p>
+                <a href={localizePath("/", l)} class="btn-primary">
+                    <i class="ph ph-house"></i>
+                    {dict.button}
+                </a>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .error-page {
+        height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--color-surface);
+        text-align: center;
+    }
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    .error-code {
+        display: block;
+        font-size: 8rem;
+        font-weight: 900;
+        color: var(--color-accent);
+        line-height: 1;
+        margin-bottom: 1rem;
+        opacity: 0.2;
+    }
+    h1 {
+        font-size: 2.5rem;
+        color: var(--color-primary);
+        margin-bottom: 1.5rem;
+    }
+    p {
+        font-size: 1.25rem;
+        color: #555;
+        margin-bottom: 2.5rem;
+    }
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 2.5rem;
+        background-color: var(--color-primary);
+        color: #fff;
+        text-decoration: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition:
+            transform 0.2s,
+            box-shadow 0.2s;
+    }
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 10px 10px 0px var(--color-accent);
+    }
+</style>

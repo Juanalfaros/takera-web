@@ -1,0 +1,605 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const l = Astro.currentLocale || "es";
+
+const dictSource = {
+    es: {
+        pageTitle: "Mi Cotización",
+        pageDesc: "Revisá tu cotización y enviala a nuestro equipo.",
+        badge: "Paso final",
+        title: "Tu Cotización",
+        subtitle:
+            "Revisá tu pedido, completá tus datos y nuestro equipo te contactará en 24 hs.",
+        summaryTitle: "Productos seleccionados",
+        empty: "Tu cotización está vacía.",
+        catalogText: "Ver Catálogo →",
+        catalogUrl: "/#soluciones",
+        totalLabel: "Estimado total",
+        disclaimer: "* El precio final se confirmará con nuestro equipo.",
+        formTitle: "Tus datos de contacto",
+        formName: "Nombre completo *",
+        formNamePh: "Juan García",
+        formCompany: "Empresa / Restaurante",
+        formCompanyPh: "Restaurante El Sol",
+        formEmail: "Email *",
+        formEmailPh: "tu@empresa.com",
+        formPhone: "Teléfono",
+        formPhonePh: "+1 (305) 000-0000",
+        formNotes: "Notas adicionales",
+        formNotesPh: "Frecuencia de pedido, condiciones de entrega, etc.",
+        formBtn: "Enviar Cotización",
+        successTitle: "¡Cotización enviada!",
+        successDesc:
+            "Te enviamos una copia a tu email. Nuestro equipo te contactará en las próximas 24 horas hábiles.",
+        successBtn: "Volver al inicio",
+        errReq: "Por favor completá los campos requeridos (nombre y email).",
+        errEmpty: "Tu cotización está vacía. Agregá al menos un producto.",
+        errSend: "Ocurrió un error al enviar. Por favor intentá de nuevo.",
+        btnSending: "Enviando...",
+    },
+    en: {
+        pageTitle: "My Quote",
+        pageDesc: "Review your quote and send it to our team.",
+        badge: "Final Step",
+        title: "Your Quote",
+        subtitle:
+            "Review your order, fill in your details and our team will contact you within 24 hours.",
+        summaryTitle: "Selected Products",
+        empty: "Your quote is empty.",
+        catalogText: "View Catalog →",
+        catalogUrl: "/en/#soluciones",
+        totalLabel: "Estimated total",
+        disclaimer: "* Final price will be confirmed with our team.",
+        formTitle: "Your contact details",
+        formName: "Full Name *",
+        formNamePh: "John Doe",
+        formCompany: "Company / Restaurant",
+        formCompanyPh: "The Sun Restaurant",
+        formEmail: "Email *",
+        formEmailPh: "you@company.com",
+        formPhone: "Phone",
+        formPhonePh: "+1 (305) 000-0000",
+        formNotes: "Additional notes",
+        formNotesPh: "Order frequency, delivery conditions, etc.",
+        formBtn: "Submit Quote",
+        successTitle: "Quote sent!",
+        successDesc:
+            "We've sent a copy to your email. Our team will contact you within the next 24 business hours.",
+        successBtn: "Back to Home",
+        errReq: "Please fill in the required fields (name and email).",
+        errEmpty: "Your quote is empty. Add at least one product.",
+        errSend: "An error occurred while sending. Please try again.",
+        btnSending: "Sending...",
+    },
+};
+
+const dict = dictSource[l as keyof typeof dictSource] || dictSource.es;
+---
+
+<Layout title={dict.pageTitle} description={dict.pageDesc}>
+    <div
+        class="quote-page"
+        data-locale={l}
+        data-err-req={dict.errReq}
+        data-err-empty={dict.errEmpty}
+        data-err-send={dict.errSend}
+        data-btn-sending={dict.btnSending}
+        data-btn-idle={dict.formBtn}
+    >
+        <div class="container">
+            <div class="page-header">
+                <span class="badge">{dict.badge}</span>
+                <h1>{dict.title}</h1>
+                <p>{dict.subtitle}</p>
+            </div>
+
+            <div id="quote-layout" class="quote-layout">
+                <!-- Resumen del carrito -->
+                <div class="quote-summary">
+                    <h2>{dict.summaryTitle}</h2>
+                    <div
+                        id="quote-empty"
+                        class="quote-empty"
+                        style="display:none"
+                    >
+                        <i class="ph ph-package"></i>
+                        <p>{dict.empty}</p>
+                        <a href={dict.catalogUrl}>{dict.catalogText}</a>
+                    </div>
+                    <ul id="quote-items" class="quote-items"></ul>
+                    <div
+                        id="quote-total-block"
+                        class="quote-total"
+                        style="display:none"
+                    >
+                        <span>{dict.totalLabel}</span>
+                        <strong id="quote-total">$0.00</strong>
+                    </div>
+                    <p class="quote-disclaimer">
+                        {dict.disclaimer}
+                    </p>
+                </div>
+
+                <!-- Formulario -->
+                <div class="quote-form-block">
+                    <h2>{dict.formTitle}</h2>
+                    <form id="quote-form" novalidate>
+                        <div class="field-group">
+                            <label for="q-name">{dict.formName}</label>
+                            <input
+                                type="text"
+                                id="q-name"
+                                name="name"
+                                placeholder={dict.formNamePh}
+                                required
+                            />
+                        </div>
+                        <div class="field-group">
+                            <label for="q-company">{dict.formCompany}</label>
+                            <input
+                                type="text"
+                                id="q-company"
+                                name="company"
+                                placeholder={dict.formCompanyPh}
+                            />
+                        </div>
+                        <div class="field-group">
+                            <label for="q-email">{dict.formEmail}</label>
+                            <input
+                                type="email"
+                                id="q-email"
+                                name="email"
+                                placeholder={dict.formEmailPh}
+                                required
+                            />
+                        </div>
+                        <div class="field-group">
+                            <label for="q-phone">{dict.formPhone}</label>
+                            <input
+                                type="tel"
+                                id="q-phone"
+                                name="phone"
+                                placeholder={dict.formPhonePh}
+                            />
+                        </div>
+                        <div class="field-group">
+                            <label for="q-message">{dict.formNotes}</label>
+                            <textarea
+                                id="q-message"
+                                name="message"
+                                rows="4"
+                                placeholder={dict.formNotesPh}></textarea>
+                        </div>
+
+                        <div
+                            id="form-error"
+                            class="form-error"
+                            style="display:none"
+                        >
+                            <i class="ph ph-warning-circle"></i>
+                            <span id="form-error-text">{dict.errReq}</span>
+                        </div>
+
+                        <button
+                            type="submit"
+                            id="submit-btn"
+                            class="btn-submit"
+                        >
+                            <span id="btn-text">{dict.formBtn}</span>
+                            <i class="ph ph-paper-plane-right"></i>
+                        </button>
+                    </form>
+
+                    <div
+                        id="success-message"
+                        class="success-msg"
+                        style="display:none"
+                    >
+                        <i class="ph ph-check-circle"></i>
+                        <h3 id="success-title">{dict.successTitle}</h3>
+                        <p id="success-desc">
+                            {dict.successDesc}
+                        </p>
+                        <a href={l === "en" ? "/en/" : "/"} class="btn-home"
+                            >{dict.successBtn}</a
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .quote-page {
+        padding: 4rem 0 6rem;
+        background: var(--color-bg);
+        min-height: 80vh;
+    }
+    .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    .page-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    .badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background: var(--color-bg);
+        color: var(--color-accent);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.8rem;
+        border: 1px solid var(--color-decor);
+        margin-bottom: 0.75rem;
+    }
+    h1 {
+        font-size: 2.5rem;
+        color: var(--color-primary);
+        margin-bottom: 0.75rem;
+    }
+    .page-header p {
+        color: #666;
+        font-size: 1.1rem;
+    }
+
+    .quote-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        align-items: start;
+    }
+    @media (max-width: 768px) {
+        .quote-layout {
+            grid-template-columns: 1fr;
+        }
+        h1 {
+            font-size: 2rem;
+        }
+    }
+
+    /* ---- RESUMEN ---- */
+    .quote-summary h2,
+    .quote-form-block h2 {
+        font-size: 1.2rem;
+        color: var(--color-primary);
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--color-decor);
+    }
+
+    .quote-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 3rem;
+        text-align: center;
+        color: #aaa;
+        border: 1px dashed var(--color-decor);
+    }
+    .quote-empty i {
+        font-size: 3rem;
+        margin-bottom: 0.75rem;
+        opacity: 0.4;
+    }
+    .quote-empty a {
+        color: var(--color-accent);
+        font-weight: 600;
+    }
+
+    .quote-items {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        padding: 0;
+        margin: 0;
+    }
+</style>
+
+<style is:global>
+    .quote-item {
+        display: grid;
+        grid-template-columns: 56px 1fr auto;
+        gap: 0.75rem;
+        align-items: center;
+        padding: 0.85rem 0;
+        border-bottom: 1px solid var(--color-decor);
+    }
+    .quote-item img {
+        width: 56px;
+        height: 56px;
+        object-fit: cover;
+        border: 1px solid var(--color-decor);
+        background: #f5f5f5;
+    }
+    .qi-img-placeholder {
+        width: 56px;
+        height: 56px;
+        background: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--color-decor);
+        color: #ccc;
+        font-size: 1.25rem;
+    }
+    .qi-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--color-primary);
+    }
+    .qi-price {
+        font-size: 0.82rem;
+        color: #888;
+        margin-top: 2px;
+    }
+    .qi-qty {
+        font-size: 0.9rem;
+        font-weight: 800;
+        color: var(--color-accent);
+        text-align: right;
+    }
+    .qi-subtotal {
+        font-size: 0.8rem;
+        color: #888;
+        text-align: right;
+    }
+
+    .quote-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-top: 2px solid var(--color-primary);
+        margin-top: 0.5rem;
+    }
+    .quote-total strong {
+        font-size: 1.5rem;
+        color: var(--color-accent);
+    }
+    .quote-disclaimer {
+        font-size: 0.8rem;
+        color: #aaa;
+        margin-top: 0.5rem;
+    }
+</style>
+
+<style>
+    .field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        margin-bottom: 1.25rem;
+    }
+    label {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: var(--color-primary);
+    }
+    input,
+    textarea {
+        width: 100%;
+        padding: 0.65rem 0.85rem;
+        border: 1px solid var(--color-decor);
+        background: #fff;
+        font-size: 0.95rem;
+        color: var(--color-primary);
+        outline: none;
+        transition: border-color 0.2s;
+        font-family: inherit;
+        box-sizing: border-box;
+    }
+    input:focus,
+    textarea:focus {
+        border-color: var(--color-accent);
+    }
+    textarea {
+        resize: vertical;
+    }
+
+    .form-error {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        background: #fef2f2;
+        border: 1px solid #fca5a5;
+        color: #b91c1c;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .btn-submit {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 0.95rem;
+        background: var(--color-primary);
+        color: #fff;
+        border: none;
+        font-size: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+    .btn-submit:hover {
+        opacity: 0.85;
+    }
+    .btn-submit:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .success-msg {
+        text-align: center;
+        padding: 2.5rem;
+        border: 2px solid var(--color-accent);
+        background: #fffbeb;
+    }
+    .success-msg i {
+        font-size: 3rem;
+        color: var(--color-accent);
+    }
+    .success-msg h3 {
+        font-size: 1.4rem;
+        margin: 0.75rem 0 0.5rem;
+        color: var(--color-primary);
+    }
+    .success-msg p {
+        color: #555;
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+    }
+    .btn-home {
+        display: inline-block;
+        padding: 0.65rem 1.5rem;
+        background: var(--color-primary);
+        color: #fff;
+        text-decoration: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+    }
+</style>
+
+<script>
+    import { cartItems, clearCart } from "../stores/cart.ts";
+
+    function formatPrice(n: number) {
+        return `$${n.toFixed(2)}`;
+    }
+
+    function renderQuote() {
+        const items = cartItems.get();
+        const emptyEl = document.getElementById("quote-empty")!;
+        const listEl = document.getElementById("quote-items")!;
+        const totalEl = document.getElementById("quote-total")!;
+        const totalBlock = document.getElementById("quote-total-block")!;
+
+        listEl.innerHTML = "";
+
+        if (items.length === 0) {
+            emptyEl.style.display = "flex";
+            totalBlock.style.display = "none";
+            return;
+        }
+        emptyEl.style.display = "none";
+        totalBlock.style.display = "flex";
+
+        let total = 0;
+        items.forEach((item) => {
+            total += item.price * item.quantity;
+            const li = document.createElement("li");
+            li.className = "quote-item";
+            li.innerHTML = `
+                ${
+                    item.imageUrl
+                        ? `<img src="${item.imageUrl}" alt="${item.name}" />`
+                        : `<div class="qi-img-placeholder"><i class="ph ph-image"></i></div>`
+                }
+                <div>
+                    <div class="qi-name">${item.name}</div>
+                    <div class="qi-price">${formatPrice(item.price)} / u</div>
+                </div>
+                <div>
+                    <div class="qi-qty">×${item.quantity}</div>
+                    <div class="qi-subtotal">${formatPrice(item.price * item.quantity)}</div>
+                </div>
+            `;
+            listEl.appendChild(li);
+        });
+        totalEl.textContent = formatPrice(total);
+    }
+
+    // Submit del formulario
+    const form = document.getElementById("quote-form") as HTMLFormElement;
+    const submitBtn = document.getElementById(
+        "submit-btn",
+    ) as HTMLButtonElement;
+    const btnText = document.getElementById("btn-text")!;
+    const successMsg = document.getElementById("success-message")!;
+    const formError = document.getElementById("form-error")!;
+    const formErrorText = document.getElementById("form-error-text")!;
+
+    // Script JS del lado cliente
+    const pageData = document.querySelector(".quote-page") as HTMLElement;
+    const errReq = pageData?.dataset.errReq || "Error en campos requeridos";
+    const errEmpty = pageData?.dataset.errEmpty || "Cotización vacía";
+    const errSend = pageData?.dataset.errSend || "Error al enviar";
+    const btnSendingText = pageData?.dataset.btnSending || "Enviando...";
+    const btnIdleText = pageData?.dataset.btnIdle || "Enviar Cotización";
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const name = (
+            form.querySelector("#q-name") as HTMLInputElement
+        ).value.trim();
+        const email = (
+            form.querySelector("#q-email") as HTMLInputElement
+        ).value.trim();
+        const company = (
+            form.querySelector("#q-company") as HTMLInputElement
+        ).value.trim();
+        const phone = (
+            form.querySelector("#q-phone") as HTMLInputElement
+        ).value.trim();
+        const message = (
+            form.querySelector("#q-message") as HTMLTextAreaElement
+        ).value.trim();
+        const items = cartItems.get();
+
+        if (!name || !email) {
+            formError.style.display = "flex";
+            formErrorText.textContent = errReq;
+            return;
+        }
+        if (items.length === 0) {
+            formError.style.display = "flex";
+            formErrorText.textContent = errEmpty;
+            return;
+        }
+
+        formError.style.display = "none";
+        submitBtn.disabled = true;
+        btnText.textContent = btnSendingText;
+
+        try {
+            const res = await fetch("/api/send-quote", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    items,
+                    client: { name, company, email, phone, message },
+                }),
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                form.style.display = "none";
+                successMsg.style.display = "block";
+                clearCart();
+            } else {
+                throw new Error(data.error || "Error desconocido");
+            }
+        } catch (err) {
+            formError.style.display = "flex";
+            formErrorText.textContent = errSend;
+            submitBtn.disabled = false;
+            btnText.textContent = btnIdleText;
+        }
+    });
+
+    cartItems.subscribe(renderQuote);
+    renderQuote();
+</script>

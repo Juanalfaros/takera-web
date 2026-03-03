@@ -1,0 +1,375 @@
+---
+import { urlFor } from "../utils/sanity";
+import { getLocalizedValue, localizePath } from "../utils/i18n";
+import { PortableText } from "@portabletext/react";
+
+interface Props {
+    products: any[];
+}
+
+const { products } = Astro.props;
+const l = Astro.currentLocale || "es";
+
+const dict = {
+    es: {
+        catalogBadge: "Catálogo",
+        catalogTitle: "Nuestros Productos",
+        catalogDesc:
+            "Tortillas frescas producidas a escala industrial, formuladas para mantener consistencia y sabor en cocinas exigentes.",
+        viewSheet: "Ver Ficha",
+        addToCart: "Agregar al carrito",
+        emptyState:
+            "No hay productos disponibles en este momento. Vuelve pronto.",
+        from: "Desde",
+    },
+    en: {
+        catalogBadge: "Catalog",
+        catalogTitle: "Our Products",
+        catalogDesc:
+            "Fresh tortillas produced on an industrial scale, formulated to maintain consistency and flavor in demanding kitchens.",
+        viewSheet: "View Sheet",
+        addToCart: "Add to cart",
+        emptyState: "No products available at this moment. Come back soon.",
+        from: "From",
+    },
+}[l as "es" | "en"] || {
+    catalogBadge: "Catálogo",
+    catalogTitle: "Nuestros Productos",
+    catalogDesc:
+        "Tortillas frescas producidas a escala industrial, formuladas para mantener consistencia y sabor en cocinas exigentes.",
+    viewSheet: "Ver Ficha",
+    addToCart: "Agregar al carrito",
+    emptyState: "No hay productos disponibles en este momento. Vuelve pronto.",
+    from: "Desde",
+};
+---
+
+<section id="soluciones" class="products-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="badge">{dict.catalogBadge}</span>
+            <h2>{dict.catalogTitle}</h2>
+            <p>
+                {dict.catalogDesc}
+            </p>
+        </div>
+
+        <div class="catalog-grid">
+            {
+                products.length > 0 ? (
+                    products.map((product: any) => {
+                        const mainImage = product.featuredImage;
+                        const imageUrl = mainImage
+                            ? urlFor(mainImage).url()
+                            : null;
+                        const basePrice = product.price;
+
+                        const localizedName = getLocalizedValue(
+                            product.name,
+                            l,
+                        );
+                        const localizedSummary = getLocalizedValue(
+                            product.summary,
+                            l,
+                        );
+                        const localizedPresentation = getLocalizedValue(
+                            product.salePresentation,
+                            l,
+                        );
+
+                        return (
+                            <article class="product-card">
+                                <div class="product-image">
+                                    {imageUrl ? (
+                                        <img
+                                            src={imageUrl}
+                                            alt={localizedName}
+                                            loading="lazy"
+                                        />
+                                    ) : (
+                                        <div class="image-placeholder">
+                                            <i class="ph ph-image" />
+                                        </div>
+                                    )}
+                                </div>
+                                <div class="product-content">
+                                    <h3>{localizedName}</h3>
+                                    <div class="product-desc">
+                                        {Array.isArray(localizedSummary) ? (
+                                            <PortableText
+                                                value={localizedSummary}
+                                            />
+                                        ) : (
+                                            localizedSummary
+                                        )}
+                                    </div>
+                                    {basePrice && (
+                                        <p class="price">
+                                            {dict.from} ${basePrice}{" "}
+                                            <span class="currency">USD</span>
+                                        </p>
+                                    )}
+                                    <div class="product-actions">
+                                        <a
+                                            href={localizePath(
+                                                `/productos/${product.slug?.current || product.slug}`,
+                                                l,
+                                            )}
+                                            class="btn-outline"
+                                        >
+                                            {dict.viewSheet}{" "}
+                                            <i class="ph ph-arrow-right" />
+                                        </a>
+                                        <button
+                                            class="btn-cart add-to-cart"
+                                            data-id={
+                                                product._id ||
+                                                product.slug?.current
+                                            }
+                                            data-name={localizedName}
+                                            data-slug={
+                                                product.slug?.current ||
+                                                product.slug
+                                            }
+                                            data-price={String(
+                                                product.price || 0,
+                                            )}
+                                            data-image={imageUrl || ""}
+                                            data-presentation={
+                                                localizedPresentation || ""
+                                            }
+                                            aria-label={dict.addToCart}
+                                        >
+                                            <i class="ph ph-shopping-cart" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </article>
+                        );
+                    })
+                ) : (
+                    <div class="empty-state">
+                        <p>{dict.emptyState}</p>
+                    </div>
+                )
+            }
+        </div>
+    </div>
+</section>
+
+<script>
+    import { addToCart } from "../stores/cart.ts";
+
+    // Usamos una función para reinicializar si hay navegación (ViewTransitions)
+    function initCatalog() {
+        document.querySelectorAll(".add-to-cart").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+                e.preventDefault();
+                const el = e.currentTarget as HTMLButtonElement;
+                addToCart({
+                    id: el.dataset.id || el.dataset.slug || "",
+                    name: el.dataset.name || "",
+                    slug: el.dataset.slug || "",
+                    price: parseFloat(el.dataset.price || "0"),
+                    imageUrl: el.dataset.image || null,
+                    salePresentation: el.dataset.presentation,
+                });
+                // Feedback visual
+                el.classList.add("added");
+                setTimeout(() => el.classList.remove("added"), 1200);
+                // Abrir el drawer
+                document.dispatchEvent(new CustomEvent("open-cart"));
+            });
+        });
+    }
+
+    // Carga inicial
+    initCatalog();
+
+    // Soporte para Astro ViewTransitions
+    document.addEventListener("astro:after-swap", initCatalog);
+</script>
+
+<style>
+    .products-section {
+        padding: 6rem 0;
+        background-color: var(--color-surface);
+    }
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+    .section-header {
+        text-align: center;
+        margin-bottom: 4rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background-color: var(--color-bg);
+        color: var(--color-accent);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+        border: 1px solid var(--color-decor);
+    }
+    h2 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: var(--color-primary);
+    }
+    .section-header p {
+        font-size: 1.2rem;
+        color: #555;
+    }
+    .catalog-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2.5rem;
+    }
+    .product-card {
+        background: var(--color-bg);
+        border: 1px solid var(--color-decor);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        transition:
+            transform 0.3s ease,
+            box-shadow 0.3s ease;
+        padding: 0;
+        overflow: hidden;
+    }
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 10px 10px 0px var(--color-accent);
+    }
+    .product-image {
+        width: 100%;
+        height: 250px;
+        background-color: #eee;
+        position: relative;
+        border-bottom: 2px solid var(--color-decor);
+    }
+    .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .image-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--color-bg);
+        color: var(--color-decor);
+        opacity: 0.3;
+    }
+    .image-placeholder i {
+        font-size: 4rem;
+    }
+    .product-content {
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+    .product-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--color-primary);
+    }
+    .product-desc {
+        color: #444;
+        margin-bottom: 1.5rem;
+        flex-grow: 1;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    .price {
+        color: var(--color-accent);
+        font-weight: 700;
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        padding-top: 1rem;
+        display: flex;
+        align-items: baseline;
+        gap: 0.35rem;
+    }
+    .price .currency {
+        font-size: 0.85rem;
+        font-weight: 400;
+        color: #888;
+        letter-spacing: 0.5px;
+    }
+    .product-actions {
+        display: flex;
+        gap: 0.5rem;
+        align-items: stretch;
+    }
+    .btn-outline {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        padding: 0.75rem 1.5rem;
+        border: 2px solid var(--color-primary);
+        color: var(--color-primary);
+        text-decoration: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.2s ease;
+    }
+    .btn-outline:hover {
+        background-color: var(--color-primary);
+        color: var(--color-surface);
+    }
+    .btn-cart {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        flex-shrink: 0;
+        background: var(--color-accent);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        font-size: 1.35rem;
+        transition:
+            background 0.2s,
+            transform 0.15s;
+    }
+    .btn-cart:hover {
+        background: var(--color-primary);
+    }
+    .btn-cart.added {
+        background: #16a34a;
+        transform: scale(1.1);
+    }
+    .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 4rem;
+        background-color: var(--color-bg);
+        border: 1px dashed var(--color-decor);
+        color: #555;
+    }
+
+    @media (max-width: 768px) {
+        h2 {
+            font-size: 2.5rem;
+        }
+        .catalog-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>

@@ -1,0 +1,52 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Hero from "../components/Hero.astro";
+import TrustedBy from "../components/TrustedBy.astro";
+import Features from "../components/Features.astro";
+import Testimonials from "../components/Testimonials.astro";
+import CTA from "../components/CTA.astro";
+import Catalog from "../components/Catalog.astro";
+import { sanityClient } from "../utils/sanity";
+
+const l = Astro.currentLocale || "es";
+
+const dict = {
+	es: {
+		seoTitle: "Fábrica de Tortillas B2B",
+		seoDesc:
+			"Fábrica de tortillas de maíz y trigo en Miami. Producción a gran escala con calidad artesanal para restaurantes y negocios.",
+	},
+	en: {
+		seoTitle: "B2B Tortilla Factory",
+		seoDesc:
+			"Corn and flour tortilla factory in Miami. Large-scale production with artisanal quality for restaurants and businesses.",
+	},
+}[l as "es" | "en"] || {
+	seoTitle: "Fábrica de Tortillas B2B",
+	seoDesc:
+		"Fábrica de tortillas de maíz y trigo en Miami. Producción a gran escala con calidad artesanal para restaurantes y negocios.",
+};
+
+// Consulta GROQ para obtener productos
+const products = await sanityClient.fetch(`*[_type == "product"]{
+  name,
+  slug,
+  price,
+  featuredImage,
+  summary,
+  description,
+  category,
+  status
+}`);
+---
+
+<Layout title={dict.seoTitle} description={dict.seoDesc}>
+	<Hero />
+	<TrustedBy />
+	<Features />
+
+	<Catalog products={products} />
+
+	<Testimonials />
+	<CTA />
+</Layout>
